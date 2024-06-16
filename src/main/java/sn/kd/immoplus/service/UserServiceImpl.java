@@ -21,6 +21,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userDAO.findByEmail(email);
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        return userDAO.emailExists(email);
+    }
+
+    @Override
     public List<User> findAll() {
         return userDAO.findAll();
     }
