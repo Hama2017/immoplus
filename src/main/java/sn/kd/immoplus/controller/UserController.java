@@ -29,6 +29,7 @@ public class UserController extends HttpServlet {
         String[] parts = uri.split("/");
         String controllerName = parts[parts.length - 1];
         request.setAttribute("controllerName", controllerName);
+
         if (action == null) {
             // Afficher la page d'accueil du locataire
             request.getRequestDispatcher("/WEB-INF/views/user/register.jsp").forward(request, response);
@@ -101,8 +102,17 @@ public class UserController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
 
+                // Redirect based on user role
+                String role = user.getRole();
+
                 // Send success response
+                response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_OK);
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"success\": true, \"message\": \""+role+"\"}");
+                out.flush();
+
             } else {
                 // Login failed
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

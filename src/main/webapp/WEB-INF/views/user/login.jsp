@@ -147,7 +147,13 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = 'dashboard.jsp';
+                        let role = response.message;
+                        switch (role) {
+                            case "tenant":
+                                window.location="tenant?action=dashboard";
+                                break;
+
+                        }
                     });
                 },
                 error: function() {

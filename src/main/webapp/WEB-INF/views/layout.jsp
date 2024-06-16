@@ -16,7 +16,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_favicon.png">
 
     <!-- TITLE -->
     <title> IMMO PLUS</title>
@@ -134,9 +134,10 @@
                         <img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop.png" class="header-brand-img desktop-logo" alt="logo">
                         <img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop.png" class="header-brand-img toggle-logo"
                              alt="logo">
-                        <img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop.png" class="header-brand-img light-logo" alt="logo">
+                        <img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_favicon.png" class="header-brand-img light-logo" alt="logo" style="max-width: 100px;
+  margin-left: -14px;">
                         <img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop.png" class="header-brand-img light-logo1"
-                             alt="logo">
+                             alt="logo" style="width: 160px;">
                     </a>
                     <!-- LOGO -->
                 </div>
@@ -151,17 +152,19 @@
 
                 <!-- CONTAINER -->
                 <div class="main-container container-fluid">
-                    <!-- ROWS-->
-                    <%
-                        // Extrait le dernier élément, qui est 'user'
-                        String action = request.getParameter("action");
-                        String controllerName = request.getAttribute("controllerName").toString();
 
-                        if (action != null && controllerName != null) {
-                            String pageI = "/WEB-INF/views/" + controllerName + "/" + action + ".jsp";
-                            request.getRequestDispatcher(pageI).include(request, response);
-                        }
-                    %>
+                    <!-- Dynamic content inclusion -->
+                    <c:choose>
+                        <c:when test="${not empty controllerName && not empty action}">
+                            <jsp:include page="/WEB-INF/views/${controllerName}/${action}.jsp" />
+                        </c:when>
+                        <c:otherwise>
+                            <p>No content available</p>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <!-- ROWS-->
+
 
 
 
@@ -182,7 +185,7 @@
         <div class="container">
             <div class="row align-items-center flex-row-reverse">
                 <div class="col-md-12 col-sm-12 text-center">
-                    Copyright © <span id="year"></span> <a href="javascript:void(0)">SMART SCHOOL</a> All rights reserved.
+                    Copyright © <span id="year"></span> <a href="javascript:void(0)">IMMO PLUS</a> All rights reserved.
                 </div>
             </div>
         </div>
