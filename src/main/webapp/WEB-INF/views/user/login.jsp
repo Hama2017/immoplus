@@ -152,7 +152,12 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                             case "tenant":
                                 window.location="tenant?action=dashboard";
                                 break;
-
+                            case "admin":
+                                window.location="admin?action=dashboard";
+                                break;
+                            case "owner":
+                                window.location="owner?action=dashboard";
+                                break;
                         }
                     });
                 },

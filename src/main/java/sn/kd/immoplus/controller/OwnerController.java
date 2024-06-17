@@ -1,5 +1,4 @@
 package sn.kd.immoplus.controller;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,8 +10,8 @@ import sn.kd.immoplus.service.UserServiceImpl;
 
 import java.io.IOException;
 
-@WebServlet("/tenant")
-public class TenantController extends HttpServlet {
+@WebServlet("/owner")
+public class OwnerController extends HttpServlet {
 
     private UserService userService = new UserServiceImpl();
 
@@ -23,15 +22,14 @@ public class TenantController extends HttpServlet {
         String[] parts = uri.split("/");
         String controllerName = parts[parts.length - 1];
         request.setAttribute("controllerName", controllerName);
-
         if (action == null) {
-         }
+        }
         else if (action.equals("dashboard")) {
             // Afficher le formulaire d'inscription
             request.setAttribute("action", "dashboard");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
         }
-            //     else if (action.equals("login")) {
+        //     else if (action.equals("login")) {
 //            // Afficher le formulaire de connexion
 //            request.getRequestDispatcher("/WEB-INF/views/user/login.jsp").forward(request, response);
 //        } else if (action.equals("profile")) {

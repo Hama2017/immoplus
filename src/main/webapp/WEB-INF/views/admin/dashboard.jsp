@@ -1,7 +1,7 @@
 
     <!-- PAGE-HEADER -->
     <div class="page-header">
-        <h1 class="page-title">Dashboard Locataire</h1>
+        <h1 class="page-title">Dashboard Admin</h1>
     </div>
     <!-- PAGE-HEADER END -->
 
