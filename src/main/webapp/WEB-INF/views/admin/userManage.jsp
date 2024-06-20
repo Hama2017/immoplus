@@ -1,3 +1,12 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="sn.kd.immoplus.model.User" %>
+<%
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        // Redirect to login page or show an error message
+    }
+%>
+<input type="hidden" id="currentUserId" value="<%= user.getId() %>">
 <div class="page-header">
     <h1 class="page-title">Gestion Utilisateurs</h1>
 </div>
@@ -67,8 +76,8 @@
                         <label for="role" class="form-label">Rôle</label>
                         <select class="form-select" id="role" name="role" required>
                             <option value="admin">Admin</option>
-                            <option value="tenant">Tenant</option>
-                            <option value="user">User</option>
+                            <option value="proprietaire" selected>Proprietaire</option>
+                            <option value="locataire">Locataire</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -120,8 +129,8 @@
                         <label for="editRole" class="form-label">Rôle</label>
                         <select class="form-select" id="editRole" name="role" required>
                             <option value="admin">Admin</option>
-                            <option value="tenant">Tenant</option>
-                            <option value="user">User</option>
+                            <option value="proprietaire">Proprietaire</option>
+                            <option value="locataire">Locataire</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -190,14 +199,18 @@
             ]
         });
 
-        $('#usersListTable').on('draw.dt', function () {
-            $('#usersListTableBody tr').each(function () {
-                // Récupère les données de la ligne actuelle
+        var currentUserId = $('#currentUserId').val(); // ID de l'utilisateur connecté
+
+        $('#usersListTable').on('draw.dt', function() {
+            $('#usersListTableBody tr').each(function() {
                 var data = usersTable.row(this).data();
 
-                // Trouver les boutons edit et delete dans la ligne actuelle
-                $(this).find('.edit-btn').attr('data-id', data.id);
-                $(this).find('.delete-btn').attr('data-id', data.id);
+                if (data.id == currentUserId) {
+                    $(this).remove();
+                } else {
+                    $(this).find('.edit-btn').attr('data-id', data.id);
+                    $(this).find('.delete-btn').attr('data-id', data.id);
+                }
             });
         });
 

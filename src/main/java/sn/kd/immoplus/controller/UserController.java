@@ -112,7 +112,7 @@ public class UserController extends HttpServlet {
             user.setPassword(hashedPassword);  // Set the hashed password            user.setAddress(address);
             user.setPhoneNumber(phoneNumber);
             user.setAddress(address);
-            user.setRole("tenant");
+            user.setRole("locataire");
             user.setStatus(1);
             user.setDateCreated(new Date());
 

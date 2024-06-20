@@ -166,6 +166,26 @@ License        :   Licensed under ThemeForest License
     box-sizing: border-box;
 }
 
+
+table.dataTable > thead .sorting_asc::before, table.dataTable > thead .sorting_desc::after {
+
+    display: none !important;
+
+}
+
+table.dataTable > thead .sorting::after, table.dataTable > thead .sorting_asc::after, table.dataTable > thead .sorting_desc::after, table.dataTable > thead .sorting_asc_disabled::after, table.dataTable > thead .sorting_desc_disabled::after {
+    display: none !important;
+}
+
+
+table.dataTable > thead .sorting::before, table.dataTable > thead .sorting::after {
+    display: none !important;
+}
+
+
+
+
+
 html {
     line-height: 1.15;
     -webkit-text-size-adjust: 100%;

@@ -13,34 +13,34 @@
                 <c:choose>
                     <c:when test="${sessionScope.user.role == 'admin'}">
                         <li class="slide">
-                            <a class="side-menu__item has-link" data-bs-toggle="slide" href="index.html">
+                            <a class="side-menu__item has-link" data-bs-toggle="slide" href="admin?action=dashboard">
                                 <i class="side-menu__icon fe fe-home"></i>
-                                <span class="side-menu__label">Dashboard A</span>
+                                <span class="side-menu__label">Dashboard</span>
                             </a>
                         </li>
                         <li class="slide">
                             <a class="side-menu__item" data-bs-toggle="slide" href="admin?action=userManage">
-                                <i class="side-menu__icon fe fe-slack"></i>
+                                <i class="side-menu__icon fe fe-users"></i>
                                 <span class="side-menu__label">Utilisateurs</span>
                                 <i class="angle fe fe-chevron-right"></i>
                             </a>
                         </li>
                         <li class="slide">
-                            <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
-                                <i class="side-menu__icon fe fe-slack"></i>
+                            <a class="side-menu__item" data-bs-toggle="slide" href="admin?action=rapports">
+                                <i class="side-menu__icon fe fe-file"></i>
                                 <span class="side-menu__label">Rapports</span>
                                 <i class="angle fe fe-chevron-right"></i>
                             </a>
                         </li>
                         <li class="slide">
-                            <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
-                                <i class="side-menu__icon fe fe-slack"></i>
+                            <a class="side-menu__item" data-bs-toggle="slide" href="admin?action=configurations">
+                                <i class="side-menu__icon fe fe-settings"></i>
                                 <span class="side-menu__label">Configurations</span>
                                 <i class="angle fe fe-chevron-right"></i>
                             </a>
                         </li>
                     </c:when>
-                    <c:when test="${sessionScope.user.role == 'tenant'}">
+                    <c:when test="${sessionScope.user.role == 'locataire'}">
                         <li class="slide">
                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="index.html">
                             <i class="side-menu__icon fe fe-home"></i>
@@ -69,7 +69,7 @@
                             </a>
                         </li>
                     </c:when>
-                    <c:when test="${sessionScope.user.role == 'owner'}">
+                    <c:when test="${sessionScope.user.role == 'proprietaire'}">
                         <!-- Contenu pour le proprietaire -->
                     </c:when>
                     <c:otherwise>

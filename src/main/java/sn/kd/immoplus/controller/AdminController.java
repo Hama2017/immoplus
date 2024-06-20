@@ -27,12 +27,17 @@ public class AdminController extends HttpServlet {
         if (action == null) {
         }
         else if (action.equals("dashboard")) {
-            // Afficher le formulaire d'inscription
             request.setAttribute("action", "dashboard");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
         }
         else if (action.equals("userManage")) {
             request.setAttribute("action", "userManage");
+            request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
+        }else if (action.equals("rapports")) {
+            request.setAttribute("action", "rapports");
+            request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
+        }else if (action.equals("configurations")) {
+            request.setAttribute("action", "configurations");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
         }
         else if (action.equals("getUsers")) {
