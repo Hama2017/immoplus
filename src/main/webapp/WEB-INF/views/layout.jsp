@@ -6,6 +6,14 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%@ page import="sn.kd.immoplus.model.User" %>
+<%
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        // Redirect to login page or show an error message
+    }
+%>
 <html>
 
 <head>
@@ -26,7 +34,7 @@
 
     <!-- STYLE CSS -->
     <link href="${pageContext.request.contextPath}/resources/assets/css/style.css" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"/>
     <!-- Plugins CSS -->
     <link href="${pageContext.request.contextPath}/resources/assets/css/plugins.css" rel="stylesheet">
 
@@ -40,6 +48,8 @@
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- SweetAlert JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -95,24 +105,24 @@
                                     <!-- SIDE-MENU -->
                                     <div class="dropdown d-flex profile-1">
                                         <a href="javascript:void(0)" data-bs-toggle="dropdown" class="nav-link leading-none d-flex">
-                                            <img src="${pageContext.request.contextPath}/resources/assets/images/users/21.jpg" alt="profile-user"
+                                            <img src="${pageContext.request.contextPath}/resources/assets/images/brand/photo-avatar-profil.png"
                                                  class="avatar  profile-user brround cover-image">
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <div class="drop-heading">
                                                 <div class="text-center">
-                                                    <h5 class="text-dark mb-0 fs-14 fw-semibold">Hama Ba</h5>
-                                                    <small class="text-muted">Admin</small>
+                                                    <h5 class="text-dark mb-0 fs-14 fw-semibold"><%= user.getFirstName() + " " + user.getLastName() %></h5>
+                                                    <small class="text-muted"><%= user.getRole() %></small>
                                                 </div>
                                             </div>
                                             <div class="dropdown-divider m-0"></div>
-                                            <a class="dropdown-item" href="profile.html">
+                                            <a class="dropdown-item" href="user?action=edit-profil">
                                                 <i class="dropdown-icon fe fe-user"></i> Profile
                                             </a>
 
 
-                                            <a class="dropdown-item" href="login.html">
-                                                <i class="dropdown-icon fe fe-alert-circle"></i> Deconnexion
+                                            <a class="dropdown-item" href="user?action=logout">
+                                                <i class="dropdown-icon fe fe-log-out"></i> Deconnexion
                                             </a>
                                         </div>
                                     </div>
@@ -200,6 +210,8 @@
     <script src="${pageContext.request.contextPath}/resources/assets/js/jquery.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 
     <!-- BOOTSTRAP JS -->

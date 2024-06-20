@@ -19,7 +19,7 @@
                             </a>
                         </li>
                         <li class="slide">
-                            <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                            <a class="side-menu__item" data-bs-toggle="slide" href="admin?action=userManage">
                                 <i class="side-menu__icon fe fe-slack"></i>
                                 <span class="side-menu__label">Utilisateurs</span>
                                 <i class="angle fe fe-chevron-right"></i>

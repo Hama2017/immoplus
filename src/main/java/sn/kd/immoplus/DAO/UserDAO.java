@@ -1,6 +1,7 @@
 package sn.kd.immoplus.DAO;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import sn.kd.immoplus.model.User;
 import sn.kd.immoplus.util.HibernateUtil;
@@ -38,4 +39,55 @@ public class UserDAO extends GenericDAOImpl<User, Long> {
             return false;
         }
     }
+
+    public boolean updatePassword(int userId, String newPassword) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSession()) {
+            transaction = session.beginTransaction();
+
+            String hql = "UPDATE User SET password = :newPassword WHERE id = :userId";
+            Query query = session.createQuery(hql);
+            query.setParameter("newPassword", newPassword);
+            query.setParameter("userId", userId);
+
+            int result = query.executeUpdate();
+            transaction.commit();
+
+            return result > 0;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateProfile(int userId, String firstName, String lastName, String email, String phoneNumber, String address) {
+        try (Session session = HibernateUtil.getSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.get(User.class, userId);
+            if (user == null) {
+                transaction.rollback();
+                return false;
+            }
+
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPhoneNumber(phoneNumber);
+            user.setAddress(address);
+
+            session.update(user);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
 }

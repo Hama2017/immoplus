@@ -8,8 +8,10 @@ public interface UserService {
     void save(User entity);
     User findById(Long id);
     User findByEmail(String email);
-    public boolean emailExists(String email);
+    boolean emailExists(String email);
     List<User> findAll();
     void update(User entity);
+    boolean updatePassword(int userId, String newPassword);
+    boolean updateProfile(int userId, String firstName, String lastName, String email, String phoneNumber, String address);
     void delete(User entity);
 }

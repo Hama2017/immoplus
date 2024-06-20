@@ -36,7 +36,7 @@ public class OwnerController extends HttpServlet {
 //            // Afficher le profil du locataire
 //            User user = (User) request.getSession().getAttribute("user");
 //            request.setAttribute("user", user);
-//            request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
+//            request.getRequestDispatcher("/WEB-INF/views/edit-profil.jsp").forward(request, response);
 //        }
     }
 

@@ -1,4 +1,5 @@
 package sn.kd.immoplus.controller;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import sn.kd.immoplus.service.UserService;
 import sn.kd.immoplus.service.UserServiceImpl;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/admin")
 public class AdminController extends HttpServlet {
@@ -29,15 +31,16 @@ public class AdminController extends HttpServlet {
             request.setAttribute("action", "dashboard");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
         }
-        //     else if (action.equals("login")) {
-//            // Afficher le formulaire de connexion
-//            request.getRequestDispatcher("/WEB-INF/views/user/login.jsp").forward(request, response);
-//        } else if (action.equals("profile")) {
-//            // Afficher le profil du locataire
-//            User user = (User) request.getSession().getAttribute("user");
-//            request.setAttribute("user", user);
-//            request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
-//        }
+        else if (action.equals("userManage")) {
+            request.setAttribute("action", "userManage");
+            request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
+        }
+        else if (action.equals("getUsers")) {
+            List<User> users = userService.findAll();
+            String jsonUsers = new Gson().toJson(users);
+            response.setContentType("application/json");
+            response.getWriter().write(jsonUsers);
+        }
     }
 
 
