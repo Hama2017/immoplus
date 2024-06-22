@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -51,13 +53,13 @@ public class UserController extends HttpServlet {
             response.setContentType("application/json");
             response.getWriter().write(jsonUsers);
         } else if (action.equals("findUserById")) {
-            long userId = Integer.parseInt(request.getParameter("id"));
+            int userId = Integer.parseInt(request.getParameter("id"));
             User user = userService.findById(userId);
             String jsonUser = new Gson().toJson(user);
             response.setContentType("application/json");
             response.getWriter().write(jsonUser);
         } else if (action.equals("editUser")) {
-            long userId = Integer.parseInt(request.getParameter("id"));
+            int userId = Integer.parseInt(request.getParameter("id"));
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String address = request.getParameter("address");
@@ -114,7 +116,11 @@ public class UserController extends HttpServlet {
             user.setAddress(address);
             user.setRole("locataire");
             user.setStatus(1);
-            user.setDateCreated(new Date());
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate localDate = LocalDate.now();
+
+            user.setDateCreated(dtf.format(localDate));
 
 
             // Vérifier si l'email existe déjà
@@ -165,7 +171,7 @@ public class UserController extends HttpServlet {
             }
 
         } else  if (action.equals("editUser")) {
-            long userId = Integer.parseInt(request.getParameter("id"));
+            int userId = Integer.parseInt(request.getParameter("id"));
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String address = request.getParameter("address");
@@ -296,7 +302,7 @@ public class UserController extends HttpServlet {
         String action = request.getParameter("action");
         if (action.equals("deleteUser")) {
             try {
-                long userId = Long.parseLong(request.getParameter("id"));
+                int userId = Integer.parseInt(request.getParameter("id"));
                 User user = userService.findById(userId);
                 if (user != null) {
                     userService.delete(user);

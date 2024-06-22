@@ -91,7 +91,7 @@
                 </form>
             </div>
             <div class="card-footer text-end">
-                <button type="button" class="btn btn-primary my-1" id="saveProfileBtn">Enregistrer</button>
+                <button type="button" class="btn btn-primary my-1" id="saveProfileBtn">Mettre à jour</button>
             </div>
         </div>
     </div>

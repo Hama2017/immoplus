@@ -3,7 +3,7 @@
     <session-factory>
         <!-- JDBC Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/immoplus</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:8889/immoplus</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">root</property>
 
@@ -24,6 +24,18 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Specify our annotated class -->
+        <!-- Specify our annotated classes -->
         <mapping class="sn.kd.immoplus.model.User"/>
+        <mapping class="sn.kd.immoplus.model.Setting"/>
+        <mapping class="sn.kd.immoplus.model.Building"/>
+        <mapping class="sn.kd.immoplus.model.Amenity"/>
+        <mapping class="sn.kd.immoplus.model.BuildingAmenity"/>
+        <mapping class="sn.kd.immoplus.model.Notification"/>
+        <mapping class="sn.kd.immoplus.model.Payment"/>
+        <mapping class="sn.kd.immoplus.model.RentalContract"/>
+        <mapping class="sn.kd.immoplus.model.RentalUnit"/>
+        <mapping class="sn.kd.immoplus.model.RentRequest"/>
+        <!-- Ajoutez les autres classes ici -->
+
     </session-factory>
 </hibernate-configuration>

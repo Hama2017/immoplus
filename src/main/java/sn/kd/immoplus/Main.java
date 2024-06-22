@@ -21,7 +21,8 @@ public class Main {
         entity.setPassword("password123");
         entity.setRole("user");
         entity.setStatus(1);
-        entity.setDateCreated(new Date());
+
+        //entity.setDateCreated(new Date());
 
         session.save(entity);
         session.getTransaction().commit();

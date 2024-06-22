@@ -14,7 +14,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "first_name", nullable = false, length = 200)
     private String firstName;
@@ -41,5 +41,5 @@ public class User {
     private int status;
 
     @Column(name = "date_created", nullable = false)
-    private Date dateCreated;
+    private String dateCreated;
 }

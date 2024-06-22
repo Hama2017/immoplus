@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
     void save(User entity);
-    User findById(Long id);
+    User findById(int id);
     User findByEmail(String email);
     boolean emailExists(String email);
     List<User> findAll();

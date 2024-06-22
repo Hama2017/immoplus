@@ -1,16 +1,12 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: hamaba
-  Date: 6/20/24
-  Time: 16:38
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="sn.kd.immoplus.model.User" %>
+<%
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        // Redirect to login page or show an error message
+    }
+%>
+<input type="hidden" id="currentUserId" value="<%= user.getId() %>">
+<div class="page-header">
+    <h1 class="page-title">Rapports</h1>
+</div>
