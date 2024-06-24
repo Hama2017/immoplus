@@ -7,6 +7,9 @@ public interface BuildingService {
     void save(Building building);
     Building findById(int id);
     List<Building> findAll();
+    List<Building> getByUserId(int userId);
     void update(Building building);
     void delete(int id);
+    void deleteBuildingAndUnits(int buildingId);
+
 }

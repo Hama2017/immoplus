@@ -9,4 +9,8 @@ public interface PaymentService {
     List<Payment> findAll();
     void update(Payment payment);
     void delete(int id);
+    void deleteByRentalContractId(int rentalContractId); // Nouvelle méthode
+    void createPaymentsForContract(int contractId, String startDate, int months, int amount); // Nouvelle méthode
+    public List<Payment> findByContractId(int contractId);
+    public void payPayment(int paymentId);
 }

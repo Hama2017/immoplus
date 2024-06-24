@@ -1,6 +1,7 @@
 package sn.kd.immoplus.service;
 
 import sn.kd.immoplus.DAO.BuildingAmenityDAO;
+import sn.kd.immoplus.model.Amenity;
 import sn.kd.immoplus.model.BuildingAmenity;
 
 import java.util.List;
@@ -35,5 +36,19 @@ public class BuildingAmenityServiceImpl implements BuildingAmenityService {
         if (buildingAmenity != null) {
             buildingAmenityDAO.delete(buildingAmenity);
         }
+    }
+
+    @Override
+    public List<BuildingAmenity> getBuildingAmenities(int buildingId) {
+        return buildingAmenityDAO.findByBuildingId(buildingId);
+    }
+
+    @Override
+    public void deleteByBuildingId(int buildingId) {
+        buildingAmenityDAO.deleteByBuildingId(buildingId);
+    }
+    @Override
+    public List<Amenity> findAmenitiesByBuildingId(int buildingId) {
+        return buildingAmenityDAO.findAmenitiesByBuildingId(buildingId);
     }
 }

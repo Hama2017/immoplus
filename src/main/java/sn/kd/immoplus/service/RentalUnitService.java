@@ -9,4 +9,6 @@ public interface RentalUnitService {
     List<RentalUnit> findAll();
     void update(RentalUnit rentalUnit);
     void delete(int id);
+    List<RentalUnit> findByUserId(int userId);
+
 }

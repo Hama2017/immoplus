@@ -9,4 +9,10 @@ public interface RentRequestService {
     List<RentRequest> findAll();
     void update(RentRequest rentRequest);
     void delete(int id);
+    List<RentRequest> findByUserId(int userId); // Ajoutez cette méthode
+    List<RentRequest> findByOwnerId(int ownerId);
+    void updateStatus(int requestId, String status);
+    List<RentRequest> findAcceptedRequests(int userId);
+    void deleteByRentalUnitId(int rentalUnitId); // Nouvelle méthode
+
 }

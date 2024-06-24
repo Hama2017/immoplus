@@ -36,4 +36,10 @@ public class RentalContractServiceImpl implements RentalContractService {
             rentalContractDAO.delete(rentalContract);
         }
     }
+
+
+    @Override
+    public List<RentalContract> findByUserId(int userId) {
+        return rentalContractDAO.findByUserId(userId); // Nouvelle méthode
+    }
 }

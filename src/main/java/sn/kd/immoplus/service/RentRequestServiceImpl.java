@@ -36,4 +36,36 @@ public class RentRequestServiceImpl implements RentRequestService {
             rentRequestDAO.delete(rentRequest);
         }
     }
+
+    @Override
+    public List<RentRequest> findByUserId(int userId) {
+        return rentRequestDAO.findByUserId(userId);
+    }
+
+
+    @Override
+    public List<RentRequest> findByOwnerId(int ownerId) {
+        return rentRequestDAO.findByOwnerId(ownerId);
+    }
+
+    @Override
+    public void updateStatus(int requestId, String status) {
+        RentRequest rentRequest = rentRequestDAO.findById(requestId);
+        if (rentRequest != null) {
+            rentRequest.setStatus(status);
+            rentRequestDAO.update(rentRequest);
+        }
+    }
+
+    @Override
+    public List<RentRequest> findAcceptedRequests(int userId) {
+        return rentRequestDAO.findAcceptedRequests(userId);
+    }
+
+    @Override
+    public void deleteByRentalUnitId(int rentalUnitId) {
+        rentRequestDAO.deleteByRentalUnitId(rentalUnitId);
+    }
+
+
 }

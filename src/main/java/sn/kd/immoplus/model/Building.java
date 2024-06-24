@@ -13,8 +13,8 @@ public class Building {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "adress", nullable = false, length = 200)
-    private String adress;
+    @Column(name = "address", nullable = false, length = 200)
+    private String address;
 
     @Column(name = "description", nullable = false)
     private String description;

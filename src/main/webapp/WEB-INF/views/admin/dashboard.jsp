@@ -103,15 +103,10 @@
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Sales Analytics</h3>
+                    <h3 class="card-title">Statistique Utilisateur</h3>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex mx-auto text-center justify-content-center mb-4">
-                        <div class="d-flex text-center justify-content-center me-3"><span class="dot-label bg-primary my-auto"></span>Total Sales</div>
-                        <div class="d-flex text-center justify-content-center"><span class="dot-label bg-secondary my-auto"></span>Total Orders</div>
-                    </div>
-                    <div class="chartjs-wrapper-demo">
-                        <canvas id="transactions" class="chart-dropshadow" height="660" style="display: block; box-sizing: border-box; height: 330px; width: 1037.5px;" width="2075"></canvas>
+                    <div>
                     </div>
                 </div>
             </div>

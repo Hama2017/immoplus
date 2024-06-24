@@ -10,6 +10,7 @@
 
         <c:choose>
             <c:when test="${not empty sessionScope.user}">
+
                 <c:choose>
                     <c:when test="${sessionScope.user.role == 'admin'}">
                         <li class="slide">
@@ -40,37 +41,64 @@
                             </a>
                         </li>
                     </c:when>
-                    <c:when test="${sessionScope.user.role == 'locataire'}">
+                    <c:when test="${sessionScope.user.role == 'proprietaire'}">
                         <li class="slide">
-                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="index.html">
+                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="owner?action=dashboard">
                             <i class="side-menu__icon fe fe-home"></i>
-                            <span class="side-menu__label">Dashboard T</span>
+                            <span class="side-menu__label">Dashboard</span>
                         </a>
                     </li>
                         <li class="slide">
-                            <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                            <a class="side-menu__item" data-bs-toggle="slide" href="owner?action=listBuilding">
                                 <i class="side-menu__icon fe fe-slack"></i>
-                                <span class="side-menu__label">Utilisateurs</span>
+                                <span class="side-menu__label">Immeubles</span>
+                                <i class="angle fe fe-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="slide">
+                            <a class="side-menu__item" data-bs-toggle="slide" href="owner?action=listRentalUnit">
+                                <i class="side-menu__icon fe fe-slack"></i>
+                                <span class="side-menu__label">Appartements</span>
                                 <i class="angle fe fe-chevron-right"></i>
                             </a>
                         </li>
                         <li class="slide">
                             <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
                                 <i class="side-menu__icon fe fe-slack"></i>
-                                <span class="side-menu__label">Rapports</span>
+                                <span class="side-menu__label">Locations</span>
                                 <i class="angle fe fe-chevron-right"></i>
                             </a>
-                        </li>
-                        <li class="slide">
-                            <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
-                                <i class="side-menu__icon fe fe-slack"></i>
-                                <span class="side-menu__label">Configurations</span>
-                                <i class="angle fe fe-chevron-right"></i>
-                            </a>
+                            <ul class="slide-menu open">
+                                <li class="panel sidetab-menu">
+                                    <div class="panel-body tabs-menu-body p-0 border-0">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="side13" role="tabpanel">
+                                                <ul class="sidemenu-list">
+                                                    <li><a href="owner?action=listRequestRent" class="slide-item">Demandes</a></li>
+                                                    <li><a href="owner?action=listRentalContract" class="slide-item">Contrats</a></li>
+                                                    <li><a href="owner?action=listPayment" class="slide-item">Paiements</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
                         </li>
                     </c:when>
-                    <c:when test="${sessionScope.user.role == 'proprietaire'}">
-                        <!-- Contenu pour le proprietaire -->
+                    <c:when test="${sessionScope.user.role == 'locataire'}">
+                        <li class="slide">
+                            <a class="side-menu__item has-link" data-bs-toggle="slide" href="tenant?action=listOffers">
+                                <i class="side-menu__icon fe fe-home"></i>
+                                <span class="side-menu__label">Offres</span>
+                            </a>
+                        </li>
+                        <li class="slide">
+                            <a class="side-menu__item" data-bs-toggle="slide" href="tenant?action=listRequestRent">
+                                <i class="side-menu__icon fe fe-users"></i>
+                                <span class="side-menu__label">Demandes</span>
+                                <i class="angle fe fe-chevron-right"></i>
+                            </a>
+                        </li>
                     </c:when>
                     <c:otherwise>
                         <!-- Contenu pour les autres rôles -->

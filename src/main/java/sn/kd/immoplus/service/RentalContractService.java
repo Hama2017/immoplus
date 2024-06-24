@@ -9,4 +9,6 @@ public interface RentalContractService {
     List<RentalContract> findAll();
     void update(RentalContract rentalContract);
     void delete(int id);
+    List<RentalContract> findByUserId(int userId); // Nouvelle méthode
+
 }

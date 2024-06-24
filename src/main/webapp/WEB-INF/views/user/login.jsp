@@ -150,7 +150,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                         let role = response.message;
                         switch (role) {
                             case "locataire":
-                                window.location="tenant?action=dashboard";
+                                window.location="tenant?action=listOffers";
                                 break;
                             case "admin":
                                 window.location="admin?action=dashboard";

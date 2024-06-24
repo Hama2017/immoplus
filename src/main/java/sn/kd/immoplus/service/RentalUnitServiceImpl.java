@@ -36,4 +36,9 @@ public class RentalUnitServiceImpl implements RentalUnitService {
             rentalUnitDAO.delete(rentalUnit);
         }
     }
+
+    @Override
+    public List<RentalUnit> findByUserId(int userId) {
+        return rentalUnitDAO.findByUserId(userId);
+    }
 }
