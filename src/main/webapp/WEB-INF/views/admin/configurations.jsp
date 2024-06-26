@@ -3,7 +3,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null) {
-        // Redirect to login page or show an error message
+
     }
 %>
 <input type="hidden" id="currentUserId" value="<%= user.getId() %>">

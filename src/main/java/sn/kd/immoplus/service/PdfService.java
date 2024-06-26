@@ -44,15 +44,9 @@ public class PdfService {
             // Ajouter les détails du paiement
             document.add(new Paragraph("Détails du Paiement", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
             document.add(new Paragraph("Date de Paiement: " + payment.getPaidDate()));
-            document.add(new Paragraph("Montant: " + payment.getAmount() + " €"));
+            document.add(new Paragraph("Montant: " + payment.getAmount() + " F CFA"));
             document.add(new Paragraph("Statut: " + payment.getStatus()));
             document.add(Chunk.NEWLINE);
-
-            // Ajouter les informations de la demande de location
-            document.add(new Paragraph("Informations de la Demande de Location", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
-            document.add(new Paragraph("Date de Début Prévue: " + rentRequest.getExpectedStartDate()));
-            document.add(new Paragraph("Nombre de Mois: " + rentRequest.getMonthsNumber()));
-            document.add(new Paragraph("Nombre de Personnes: " + rentRequest.getPersonsNumber()));
 
             document.close();
             return baos.toByteArray();

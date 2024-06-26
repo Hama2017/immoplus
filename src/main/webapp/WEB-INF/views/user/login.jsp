@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_favicon.png">
 
     <!-- TITLE -->
     <title>IMMO PLUS</title>
@@ -57,7 +57,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
             <!-- CONTAINER OPEN -->
             <div class="col col-login mx-auto mt-7">
                 <div class="text-center">
-                    <a href="index.html"><img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop_blanc.png" class="header-brand-img m-0" style="    width: 312px;
+                    <a href="index"><img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop_blanc.png" class="header-brand-img m-0" style="    width: 312px;
     margin-bottom: 20px !important;" alt=""></a>
                 </div>
             </div>
@@ -93,6 +93,10 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 
                         <div class="text-center pt-3">
                             <p class="text-dark mb-0 d-inline-flex">Vous n'avez pas un compte ?<a href="user?action=register" class="text-primary ms-1">Creer un compte</a></p>
+
+                        </div>
+                        <div class="text-center pt-3">
+                            <p class="text-dark mb-0 d-inline-flex">Revenir a l'accueil<a href="index" class="text-primary ms-1">Accueil</a></p>
                         </div>
                     </form>
                 </div>
@@ -153,10 +157,10 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                                 window.location="tenant?action=listOffers";
                                 break;
                             case "admin":
-                                window.location="admin?action=dashboard";
+                                window.location="admin?action=userManage";
                                 break;
                             case "proprietaire":
-                                window.location="owner?action=dashboard";
+                                window.location="owner?action=listRequestRent";
                                 break;
                         }
                     });

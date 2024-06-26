@@ -3,8 +3,13 @@
 <%@ page import="sn.kd.immoplus.model.User" %>
 <%
     User user = (User) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect("index"); // Redirect to the login page
+        return; //
+    }
 
 %>
+
 <html>
 
 <head>
@@ -61,7 +66,7 @@
                 <div class="d-flex">
                     <a aria-label="Hide Sidebar" class="app-sidebar__toggle" data-bs-toggle="sidebar" href="javascript:void(0)"></a>
                     <!-- sidebar-toggle-->
-                    <a class="logo-horizontal " href="index.html">
+                    <a class="logo-horizontal " href="index">
                         <img src="${pageContext.request.contextPath}/resources/assets/images/brand/logo-white.png" class="header-brand-img desktop-logo" alt="logo">
                         <img src="${pageContext.request.contextPath}/resources/assets/images/brand/logo-dark.png" class="header-brand-img light-logo1"
                              alt="logo">
@@ -92,6 +97,33 @@
                                         </div>
                                     </div>
 
+
+                                    <div class="dropdown  d-flex notifications">
+                                        <a href="index" class="btn btn-outline-primary">Accueil</a>
+                                    </div>
+
+
+                                    <!-- Notifications Dropdown -->
+                                    <div class="dropdown  d-flex notifications">
+                                        <a class="nav-link icon" data-bs-toggle="dropdown" aria-expanded="true">
+                                            <i class="fe fe-bell"></i>
+                                            <div id="notifUnReadCount">
+
+                                            </div>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-bs-popper="static">
+                                            <div class="drop-heading border-bottom">
+                                                <div class="d-flex">
+                                                    <h6 class="mt-1 mb-0 fs-16 fw-semibold text-dark">Notifications</h6>
+                                                </div>
+                                            </div>
+                                            <div class="notifications-menu ps" id="notificationsList">
+                                                <!-- Notifications will be loaded here via AJAX -->
+                                            </div>
+                                            <div class="dropdown-divider m-0"></div>
+                                            <a href="user?action=listNotifications" class="dropdown-item text-center p-3 text-muted">Tout les notifications</a>
+                                        </div>
+                                    </div>
 
                                     <!-- SIDE-MENU -->
                                     <div class="dropdown d-flex profile-1">
@@ -263,6 +295,65 @@
     <script src="${pageContext.request.contextPath}/resources/assets/switcher/js/switcher.js"></script>
 
 
+<script>$(document).ready(function() {
+    function loadNotifications() {
+        $.ajax({
+            url: 'user?action=getNotifications',
+            method: 'GET',
+            success: function(data) {
+                var notificationsHTML = '';
+                data.forEach(function(notification) {
+                    notificationsHTML +=
+                        '<a class="dropdown-item d-flex" href="user?action=listNotifications&idNotification=' + notification.id + '">' +
+                        '<div class="me-3 notifyimg bg-secondary brround box-shadow-secondary">' +
+                        '<i class="fe fe-message-circle"></i>' +
+                        '</div>' +
+                        '<div class="mt-1 wd-80p">' +
+                        '<h5 class="notification-label mb-1">' + notification.title + '</h5>' +
+                        '<span class="notification-subtext">' + notification.dateCreated + '</span>' +
+                        '</div>' +
+                        '</a>';
+                });
+                $('#notificationsList').html(notificationsHTML);
+            }
+        });
+    }
+
+    loadNotifications();
+
+    function loadUnreadNotificationsCount() {
+        $.ajax({
+            url: 'user?action=getUnreadNotificationsCount',
+            type: 'GET',
+            success: function(data) {
+                var count = data;
+                var notifUnReadCount = $('#notifUnReadCount');
+                console.log(count)
+                console.log(notifUnReadCount)
+                console.log(data)
+                if (count > 0) {
+                    notifUnReadCount.html(
+                        '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">' + (count > 20 ? '20+' : count) + '</span>'
+                    );
+                } else {
+                    notifUnReadCount.empty();
+                }
+            },
+            error: function() {
+                console.log('Erreur lors de la récupération du compteur de notifications non lues');
+            }
+        });
+    }
+
+    // Charger le compteur de notifications non lues à l'initialisation
+    loadUnreadNotificationsCount();
+
+    // Charger le compteur toutes les 30 secondes
+    setInterval(loadUnreadNotificationsCount, 30000);
+
+
+});
+</script>
 
 </body>
 

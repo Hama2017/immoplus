@@ -41,4 +41,18 @@ public class RentalUnitServiceImpl implements RentalUnitService {
     public List<RentalUnit> findByUserId(int userId) {
         return rentalUnitDAO.findByUserId(userId);
     }
+
+    @Override
+    public List<RentalUnit> findAll(Integer priceMin, Integer priceMax, Integer amenityId) {
+        return rentalUnitDAO.findAll(priceMin, priceMax, amenityId);
+    }
+
+    @Override
+    public List<RentalUnit> findAvailableUnits(Integer priceMin, Integer priceMax, Integer amenityId) {
+        return rentalUnitDAO.findAvailableUnits(priceMin, priceMax, amenityId);
+    }
+
+
+
+
 }

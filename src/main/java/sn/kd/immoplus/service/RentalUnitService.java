@@ -10,5 +10,7 @@ public interface RentalUnitService {
     void update(RentalUnit rentalUnit);
     void delete(int id);
     List<RentalUnit> findByUserId(int userId);
+    List<RentalUnit> findAll(Integer priceMin, Integer priceMax, Integer amenityId); // Nouvelle méthode
+    List<RentalUnit> findAvailableUnits(Integer priceMin, Integer priceMax, Integer amenityId);
 
 }

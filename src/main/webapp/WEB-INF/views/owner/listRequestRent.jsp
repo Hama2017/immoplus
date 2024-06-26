@@ -26,8 +26,8 @@
                         <th>Nom du Locataire</th>
                         <th>Appartement</th>
                         <th>Date de début prévue</th>
-                        <th>Nombre de mois</th>
-                        <th>Nombre de personnes</th>
+                        <th>Nombre de mois prévue</th>
+                        <th>Nombre de personnes prévue</th>
                         <th>Statut</th>
                         <th>Actions</th>
                     </tr>
@@ -55,10 +55,12 @@
                 url: "owner?action=getRequests",
                 type: "GET",
                 success: function(data) {
+                    console.log("Ddddddd")
+                    console.log(data)
                     var requestsHTML = "";
                     data.forEach(function(request) {
                         requestsHTML += "<tr>" +
-                            "<td>" + request.rentRequest.id + "</td>" +
+                            "<td>DL" + request.rentRequest.id + "</td>" +
                             "<td>" + request.user.firstName +" "+ request.user.lastName + "</td>" +
                             "<td>" + request.rentalUnit.description + "</td>" +
                             "<td>" + request.rentRequest.expectedStartDate + "</td>" +
@@ -93,7 +95,7 @@
                     return "<span class='badge bg-warning text-dark'>" + status + "</span>";
                 case "Refusée":
                     return "<span class='badge bg-danger'>" + status + "</span>";
-                case "Contrat signé":
+                case "Contrat":
                     return "<span class='badge bg-primary'>" + status + "</span>";
                 default:
                     return status;

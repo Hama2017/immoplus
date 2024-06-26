@@ -16,11 +16,10 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Sélectionner un contrat</h3>
                 <select id="contractSelect" class="form-select">
                     <option value="">Sélectionner un contrat</option>
                 </select>
-                <button id="loadPaymentsBtn" class="btn btn-primary">Charger paiements</button>
+                <button id="loadPaymentsBtn" class="btn btn-primary" style="margin-left: 10px;">Charger paiements</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -70,7 +69,12 @@
             if (contractId) {
                 loadPayments(contractId);
             } else {
-                alert('Veuillez sélectionner un contrat');
+                Swal.fire({
+                    title: 'Erreur',
+                    text: "Veuillez sélectionner un contrat",
+                    icon: 'warning',
+                    confirmButtonColor: '#3085d6',
+                });
             }
         });
 
@@ -83,7 +87,7 @@
                     data.forEach(function(payment) {
                         paymentsHTML += '<tr>' +
                             '<td>' + payment.paymentDate + '</td>' +
-                            '<td>' + payment.amount + ' €</td>' +
+                            '<td>' + payment.amount + ' F CFA</td>' +
                             '<td>' + payment.status + '</td>' +
                             '<td>';
                         if (payment.paidDate == null) {

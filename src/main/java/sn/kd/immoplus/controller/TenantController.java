@@ -25,6 +25,7 @@ public class TenantController extends HttpServlet {
     private final BuildingService buildingService = new BuildingServiceImpl();
     private final BuildingAmenityService buildingAmenityService = new BuildingAmenityServiceImpl();
     private final RentRequestService rentRequestService = new RentRequestServiceImpl();
+    private final AmenityService amenityService = new AmenityServiceImpl();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -34,7 +35,17 @@ public class TenantController extends HttpServlet {
         request.setAttribute("controllerName", controllerName);
 
         if ("getOffers".equals(action)) {
-            List<RentalUnit> rentalUnits = rentalUnitService.findAll();
+
+            // Récupérer les paramètres de filtre
+            String priceMinStr = request.getParameter("priceMin");
+            String priceMaxStr = request.getParameter("priceMax");
+            String amenityIdStr = request.getParameter("amenity");
+
+            Integer priceMin = (priceMinStr != null && !priceMinStr.isEmpty()) ? Integer.parseInt(priceMinStr) : null;
+            Integer priceMax = (priceMaxStr != null && !priceMaxStr.isEmpty()) ? Integer.parseInt(priceMaxStr) : null;
+            Integer amenityId = (amenityIdStr != null && !amenityIdStr.isEmpty()) ? Integer.parseInt(amenityIdStr) : null;
+
+            List<RentalUnit> rentalUnits = rentalUnitService.findAvailableUnits(priceMin, priceMax, amenityId);
             List<RentalUnitDTO> rentalUnitDTOs = convertToDTOs(rentalUnits);
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(rentalUnitDTOs));
@@ -50,6 +61,17 @@ public class TenantController extends HttpServlet {
             List<RentRequestDTO> rentRequestDTOs = convertToDTOsRentRequest(rentRequests);
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(rentRequestDTOs));
+        }else if ("getAmenities".equals(action)) {
+            List<Amenity> amenities = amenityService.findAll();
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson(amenities));
+            System.out.println(amenities.get(0).getName());
+        }else if ("checkRequest".equals(action)) {
+            User user = (User) request.getSession().getAttribute("user");
+            int rentalUnitId = Integer.parseInt(request.getParameter("rentalUnitId"));
+            boolean hasRequested = rentRequestService.hasUserRequested(user.getId(), rentalUnitId);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"hasRequested\": " + hasRequested + "}");
         }
     }
 

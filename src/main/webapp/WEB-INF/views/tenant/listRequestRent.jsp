@@ -22,7 +22,7 @@
                     <span class="badge bg-success">Validé</span>
                     <span class="badge bg-warning">En attente</span>
                     <span class="badge bg-danger">Refusé</span>
-                    <span class="badge bg-primary">Contrat</span>
+                    <span class="badge bg-primary">Contrat signé</span>
                 </div>
                 <table id="requestsTable" class="table table-bordered">
                     <thead>
@@ -30,9 +30,8 @@
                         <th>ID</th>
                         <th>Immeuble</th>
                         <th>Appartement</th>
-                        <th>Date de début</th>
-                        <th>Nombre de mois</th>
-                        <th>Nombre de personnes</th>
+                        <th>Date de début prévue</th>
+                        <th>Nombre de mois prévue</th>
                         <th>Statut</th>
                     </tr>
                     </thead>
@@ -55,6 +54,8 @@
                 url: "tenant?action=getRentRequests",
                 type: "GET",
                 success: function(data) {
+
+                    console.log(data)
                     var tableBody = $("#requestsTable tbody");
                     tableBody.empty();
                     data.forEach(function(request) {
@@ -62,7 +63,7 @@
                         console.log(request)
                         var statusClass = '';
                         switch (request.rentRequest.status) {
-                            case 'Validé':
+                            case 'Validée':
                                 statusClass = 'bg-success';
                                 break;
                             case 'En attente':
@@ -76,11 +77,10 @@
                                 break;
                         }
                         var row = "<tr>" +
-                            "<td>" + request.rentRequest.id + "</td>" +
-                            "<td>" + request.building.address + "</td>" +
+                            "<td>DL" + request.rentRequest.id + "</td>" +
+                            "<td>" + request.building.description + "</td>" +
                             "<td>" + request.rentalUnit.unitNumber + "</td>" +
                             "<td>" + request.rentRequest.expectedStartDate + "</td>" +
-                            "<td>" + request.rentRequest.monthsNumber + "</td>" +
                             "<td>" + request.rentRequest.personsNumber + "</td>" +
                             "<td><span class='badge " + statusClass + "'>" + request.rentRequest.status + "</span></td>" +
                             "</tr>";

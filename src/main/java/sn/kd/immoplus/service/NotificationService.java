@@ -9,4 +9,10 @@ public interface NotificationService {
     List<Notification> findAll();
     void update(Notification notification);
     void delete(int id);
-}
+    List<Notification> getNotificationsByUserId(int userId);
+    void markAsRead(int notificationId);
+    void deleteNotification(Notification notification);
+    void deleteAllNotificationsByUserId(int userId);
+    int getUnreadNotificationsCount(int userId);
+
+    }

@@ -34,4 +34,34 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDAO.delete(notification);
         }
     }
+
+
+    @Override
+    public List<Notification> getNotificationsByUserId(int userId) {
+        return notificationDAO.findByUserId(userId);
+    }
+
+    @Override
+    public void markAsRead(int notificationId) {
+        Notification notification = notificationDAO.findById(notificationId);
+        if (notification != null) {
+            notification.setStatus(1); // 1 means read
+            notificationDAO.update(notification);
+        }
+    }
+
+    @Override
+    public void deleteNotification(Notification notification) {
+        notificationDAO.delete(notification);
+    }
+
+    @Override
+    public void deleteAllNotificationsByUserId(int userId) {
+        notificationDAO.deleteAllByUserId(userId);
+    }
+
+    @Override
+    public int getUnreadNotificationsCount(int userId) {
+        return notificationDAO.countUnreadNotifications(userId);
+    }
 }

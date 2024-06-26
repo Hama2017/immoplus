@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_favicon.png">
 
     <!-- TITLE -->
     <title>IMMO PLUS</title>
@@ -57,7 +57,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
             <!-- CONTAINER OPEN -->
             <div class="col col-login mx-auto mt-7">
                 <div class="text-center">
-                    <a href="index.html"><img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop_blanc.png" class="header-brand-img m-0" style="    width: 312px;
+                    <a href="index"><img src="${pageContext.request.contextPath}/resources/assets/images/brand/immoplus_logo_transparent_crop_blanc.png" class="header-brand-img m-0" style="    width: 312px;
     margin-bottom: 20px !important;" alt=""></a>
                 </div>
             </div>
@@ -124,6 +124,9 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                         <div class="text-center pt-3">
                             <p class="text-dark mb-0 d-inline-flex">Vous avez déjà un compte ?<a href="user?action=login" class="text-primary ms-1">Se connecter</a></p>
                         </div>
+                        <div class="text-center pt-3">
+                            <p class="text-dark mb-0 d-inline-flex">Revenir a l'accueil<a href="index" class="text-primary ms-1">Accueil</a></p>
+                        </div>
                     </form>
                 </div>
 
@@ -164,8 +167,57 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 
 <script>
     $(document).ready(function() {
+        // Fonction pour vérifier si un numéro de téléphone est valide
+        function isValidPhoneNumber(phoneNumber) {
+            var phoneRegex = /^[0-9]{9}$/;
+            return phoneRegex.test(phoneNumber);
+        }
+
         $("#registerForm").submit(function(event) {
             event.preventDefault();
+
+            // Récupérer les valeurs des champs
+            var firstName = $("input[name='firstName']").val();
+            var lastName = $("input[name='lastName']").val();
+            var email = $("input[name='email']").val();
+            var password = $("input[name='password']").val();
+            var address = $("input[name='address']").val();
+            var phoneNumber = $("input[name='phoneNumber']").val();
+            var termsAccepted = $("input[type='checkbox']").is(":checked");
+
+            // Valider les champs
+            if (!firstName) {
+                Swal.fire("Erreur", "Le prénom est requis", "error");
+                return;
+            }
+            if (!lastName) {
+                Swal.fire("Erreur", "Le nom est requis", "error");
+                return;
+            }
+            if (!email) {
+                Swal.fire("Erreur", "L'email est requis", "error");
+                return;
+            }
+            if (!password) {
+                Swal.fire("Erreur", "Le mot de passe est requis", "error");
+                return;
+            }
+            if (!address) {
+                Swal.fire("Erreur", "L'adresse est requise", "error");
+                return;
+            }
+            if (!phoneNumber) {
+                Swal.fire("Erreur", "Le numéro de téléphone est requis", "error");
+                return;
+            }
+            if (!isValidPhoneNumber(phoneNumber)) {
+                Swal.fire("Erreur", "Le numéro de téléphone doit contenir exactement 9 chiffres", "error");
+                return;
+            }
+            if (!termsAccepted) {
+                Swal.fire("Erreur", "Vous devez accepter les termes et conditions", "error");
+                return;
+            }
 
             var formData = $(this).serialize();
 
@@ -182,24 +234,22 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                             showConfirmButton: false,
                             timer: 2000
                         }).then(() => {
-                                window.location="user?action=login";
+                            window.location = "user?action=login";
                         });
-                    } else if(response.error){
+                    } else if (response.error) {
                         Swal.fire({
                             title: "Erreur d'inscription",
                             text: response.message,
                             icon: "error",
                             confirmButtonText: "OK",
-                            confirmButtonColor:"#0092dd",
-
+                            confirmButtonColor: "#0092dd",
                         });
-
                     } else {
                         Swal.fire({
                             title: "Erreur d'inscription",
                             text: response.message,
                             icon: "error",
-                            confirmButtonColor:"#0092dd",
+                            confirmButtonColor: "#0092dd",
                             confirmButtonText: "OK"
                         });
                     }
@@ -210,6 +260,18 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 </script>
 
 
+<style>
+
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+        border: 0;
+        border-radius: .25em;
+        background: initial;
+        background-color: initial;
+        background-color: #0092dd;
+        color: #fff;
+        font-size: 1em;
+    }
+</style>
 
 </body>
 

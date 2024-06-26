@@ -14,7 +14,6 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Appartements</h3>
                 <button id="addApartmentButton" class="btn btn-primary float-end">Ajouter Appartement</button>
             </div>
             <div class="card-body">
@@ -45,9 +44,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addApartmentModalLabel">Ajouter Appartement</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 <form id="addApartmentForm">
                     <div class="mb-3">
                         <label for="buildingSelect" class="form-label">Immeuble</label>
@@ -151,7 +151,7 @@
                 {
                     data: null,
                     render: function (data) {
-                        return "<button class='btn btn-primary btn-sm edit-btn' data-id='"+data.id+"'>Modifier</button><button class='btn btn-danger btn-sm delete-btn'  data-id='"+data.id+"'>Supprimer</button>";
+                        return "<button class='btn btn-primary btn-sm edit-btn' data-id='"+data.id+"'>Modifier</button><button class='btn btn-danger btn-sm delete-btn' style='margin-left: 10px;'  data-id='"+data.id+"'>Supprimer</button>";
                         ;
                     }
                 }
@@ -165,6 +165,9 @@
 
         $('#addApartmentForm').on('submit', function (e) {
             e.preventDefault();
+            if (!validateApartmentForm('#addApartmentForm')) {
+                return;
+            }
             var formData = $(this).serialize();
             $.post('owner?action=addApartment', formData, function () {
                 apartmentsTable.ajax.reload();
@@ -193,6 +196,9 @@
 
         $('#editApartmentForm').on('submit', function (e) {
             e.preventDefault();
+            if (!validateApartmentForm('#editApartmentForm')) {
+                return;
+            }
             var formData = $(this).serialize();
             const apartmentId = $('#editApartmentId').val();
             $.ajax({
@@ -246,6 +252,28 @@
                 });
                 $(selector).html(options);
             });
+        }
+
+        function validateApartmentForm(formSelector) {
+            let isValid = true;
+            const form = $(formSelector);
+
+            form.find('input, textarea, select').each(function () {
+                if (!$(this).val()) {
+                    isValid = false;
+                    Swal.fire('Erreur', 'Tous les champs doivent être remplis.', 'error');
+                    return false;  // break the loop
+                }
+
+                const value = parseInt($(this).val());
+                if ($(this).attr('type') === 'number' && value < 0) {
+                    isValid = false;
+                    Swal.fire('Erreur', 'Les valeurs doivent être positives.', 'error');
+                    return false;  // break the loop
+                }
+            });
+
+            return isValid;
         }
     });
 </script>

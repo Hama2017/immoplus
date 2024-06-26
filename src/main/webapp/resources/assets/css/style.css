@@ -18904,7 +18904,7 @@ img {
 }
 
 .landing-top-header .top {
-    border-block-end: 1px solid transparent;
+    border-block-end: 1px solid #0092dd;
 }
 
 .landing-top-header .top .nav li {
@@ -18986,7 +18986,6 @@ img {
 
 .demo-footer {
     background-color: #f8f9fb;
-    padding-block-start: 100px;
 }
 
 .demo-footer .card {
@@ -19473,7 +19472,7 @@ img {
     inset-block-start: 0;
     width: 100%;
     z-index: 99;
-    border-block-end: 1px solid #ebedfa;
+    border-block-end: 1px solid #0092dd;
     background: #fff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }

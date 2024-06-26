@@ -1,28 +1,22 @@
 package sn.kd.immoplus.controller;
+
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import sn.kd.immoplus.dto.RentRequestDTO;
+import sn.kd.immoplus.dto.RentalContractDTO;
 import sn.kd.immoplus.model.*;
 import sn.kd.immoplus.service.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
-
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 @MultipartConfig(
@@ -31,7 +25,6 @@ import java.util.stream.Collectors;
         maxRequestSize = 1024 * 1024 * 15    // 15 MB
 )
 @WebServlet("/owner")
-
 public class OwnerController extends HttpServlet {
 
     private static final Gson gson = new Gson();
@@ -43,10 +36,8 @@ public class OwnerController extends HttpServlet {
     private RentRequestService rentRequestService = new RentRequestServiceImpl();
     private RentalContractService rentalContractService = new RentalContractServiceImpl();
     private PaymentService paymentService = new PaymentServiceImpl();
+    private NotificationService notificationService = new NotificationServiceImpl();
     BuildingAmenityService buildingAmenityService = new BuildingAmenityServiceImpl();
-
-
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -64,7 +55,7 @@ public class OwnerController extends HttpServlet {
         } else if ("listRentalUnit".equals(action)) {
             request.setAttribute("action", "listRentalUnit");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
-        }else if ("listPayment".equals(action)) {
+        } else if ("listPayment".equals(action)) {
             request.setAttribute("action", "listPayment");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
         } else if ("getBuildings".equals(action)) {
@@ -114,7 +105,7 @@ public class OwnerController extends HttpServlet {
 
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(responseData));
-        }else if ("getApartments".equals(action)) {
+        } else if ("getApartments".equals(action)) {
 
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
@@ -130,9 +121,7 @@ public class OwnerController extends HttpServlet {
             out.write(new Gson().toJson(apartments));
             out.close();
 
-
-
-        }else if ("findApartmentById".equals(action)) {
+        } else if ("findApartmentById".equals(action)) {
 
             int id = Integer.parseInt(request.getParameter("id"));
             RentalUnit apartment = rentalUnitService.findById(id);
@@ -142,24 +131,33 @@ public class OwnerController extends HttpServlet {
             out.write(new Gson().toJson(apartment));
             out.close();
 
-        }else if ("listRequestRent".equals(action)) {
+        } else if ("listRequestRent".equals(action)) {
             request.setAttribute("action", "listRequestRent");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
-        }else if ("getRequests".equals(action)) {
+        } else if ("getRequests".equals(action)) {
             User user = (User) request.getSession().getAttribute("user");
             List<RentRequest> rentRequests = rentRequestService.findByOwnerId(user.getId());
             List<RentRequestDTO> rentRequestDTOs = convertToDTOs(rentRequests);
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(rentRequestDTOs));
-        }else if ("listRentalContract".equals(action)) {
+        } else if ("listRentalContract".equals(action)) {
             request.setAttribute("action", "listRentalContract");
             request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
-        }else if ("getContracts".equals(action)) {
+        } else if ("getContracts".equals(action)) {
             User user = (User) request.getSession().getAttribute("user");
             List<RentalContract> contracts = rentalContractService.findByUserId(user.getId());
+
+            List<RentalContractDTO> contractDTOs = contracts.stream()
+                    .map(contract -> {
+                        User tenant = userService.findById(contract.getUserId());
+                        RentalUnit rentalUnit = rentalUnitService.findById(contract.getRentalUnitId());
+                        return new RentalContractDTO(contract, tenant, rentalUnit);
+                    })
+                    .collect(Collectors.toList());
+
             response.setContentType("application/json");
-            response.getWriter().write(new Gson().toJson(contracts));
-        }else if ("getAcceptedTenants".equals(action)) {
+            response.getWriter().write(new Gson().toJson(contractDTOs));
+        } else if ("getAcceptedTenants".equals(action)) {
             User user = (User) request.getSession().getAttribute("user");
             List<RentRequest> acceptedRequests = rentRequestService.findAcceptedRequests(user.getId());
 
@@ -174,134 +172,159 @@ public class OwnerController extends HttpServlet {
 
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(rentRequestDTOs));
-        }else if ("getContractsByUser".equals(action)) {
+        } else if ("getContractsByUser".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
             List<RentalContract> contracts = rentalContractService.findByUserId(userId);
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(contracts));
-        }else if ("getPaymentsByContract".equals(action)) {
+        } else if ("getPaymentsByContract".equals(action)) {
             int contractId = Integer.parseInt(request.getParameter("contractId"));
             List<Payment> payments = paymentService.findByContractId(contractId);
             response.setContentType("application/json");
             response.getWriter().write(new Gson().toJson(payments));
-        }else {
+        } else {
             // Action par défaut si aucune correspondance trouvée
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action non reconnue");
         }
 
-
     }
-
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-            if (action.equals("addBuilding")) {
-                // Récupérer les données du formulaire
-                String address = request.getParameter("address");
-                String description = request.getParameter("description");
-                int floorNumber = Integer.parseInt(request.getParameter("floorNumber"));
-                int userId = ((User) request.getSession().getAttribute("user")).getId();
+        if (action.equals("addBuilding")) {
+            // Récupérer les données du formulaire
+            String address = request.getParameter("address");
+            String description = request.getParameter("description");
+            int floorNumber = Integer.parseInt(request.getParameter("floorNumber"));
+            int userId = ((User) request.getSession().getAttribute("user")).getId();
 
-                // Récupérer le fichier image envoyé
-                Part filePart = request.getPart("imgPath");
+            // Récupérer le fichier image envoyé
+            Part filePart = request.getPart("imgPath");
+            String fileName = filePart.getSubmittedFileName();
+            InputStream fileContent = filePart.getInputStream();
+
+            // Chemin d'accès à src/main/webapp/resources/images
+            String uploadPath = getServletContext().getRealPath("/resources/images/") + File.separator + fileName;
+
+            // Enregistrer le fichier image sur le serveur
+            File file = new File(uploadPath);
+            file.getParentFile().mkdirs(); // Créez les répertoires parents si nécessaire
+            Files.copy(fileContent, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // Créer une instance de Building avec les données
+            Building building = new Building();
+            building.setAddress(address);
+            building.setDescription(description);
+            building.setFloorNumber(floorNumber);
+            building.setImgPath("resources/images/" + fileName); // Enregistrer le chemin relatif vers le fichier image
+            building.setUserId(userId);
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.now();
+            building.setDateCreated(dtf.format(localDate));
+
+            // Appeler le service pour enregistrer le bâtiment dans la base de données
+            buildingService.save(building);
+
+            // Enregistrer les équipements sélectionnés pour le bâtiment
+            String[] amenities = request.getParameterValues("amenities");
+            if (amenities != null) {
+                for (String amenityId : amenities) {
+                    BuildingAmenity buildingAmenity = new BuildingAmenity();
+                    buildingAmenity.setBuildingId(building.getId());
+                    buildingAmenity.setAmenityId(Integer.parseInt(amenityId));
+                    buildingAmenityService.save(buildingAmenity);
+                }
+            }
+
+            // Envoyer une réponse JSON de succès
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson("success"));
+        } else if (action.equals("updateBuilding")) {
+
+            int buildingId = Integer.parseInt(request.getParameter("buildingId"));
+            String address = request.getParameter("address");
+            String description = request.getParameter("description");
+            int floorNumber = Integer.parseInt(request.getParameter("floorNumber"));
+            Part filePart = request.getPart("imgPath");
+
+            Building building = buildingService.findById(buildingId);
+            building.setAddress(address);
+            building.setDescription(description);
+            building.setFloorNumber(floorNumber);
+
+            if (filePart != null && filePart.getSize() > 0) {
                 String fileName = filePart.getSubmittedFileName();
                 InputStream fileContent = filePart.getInputStream();
-
-                // Chemin d'accès à src/main/webapp/resources/images
                 String uploadPath = getServletContext().getRealPath("/resources/images/") + File.separator + fileName;
-
-                // Enregistrer le fichier image sur le serveur
                 File file = new File(uploadPath);
                 file.getParentFile().mkdirs(); // Créez les répertoires parents si nécessaire
                 Files.copy(fileContent, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Créer une instance de Building avec les données
-                Building building = new Building();
-                building.setAddress(address);
-                building.setDescription(description);
-                building.setFloorNumber(floorNumber);
-                building.setImgPath("resources/images/" + fileName); // Enregistrer le chemin relatif vers le fichier image
-                building.setUserId(userId);
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate localDate = LocalDate.now();
-                building.setDateCreated(dtf.format(localDate));
-
-                // Appeler le service pour enregistrer le bâtiment dans la base de données
-                buildingService.save(building);
-
-                // Enregistrer les équipements sélectionnés pour le bâtiment
-                String[] amenities = request.getParameterValues("amenities");
-                if (amenities != null) {
-                    for (String amenityId : amenities) {
-                        BuildingAmenity buildingAmenity = new BuildingAmenity();
-                        buildingAmenity.setBuildingId(building.getId());
-                        buildingAmenity.setAmenityId(Integer.parseInt(amenityId));
-                        buildingAmenityService.save(buildingAmenity);
-                    }
-                }
-
-                // Envoyer une réponse JSON de succès
-                response.setContentType("application/json");
-                response.getWriter().write(new Gson().toJson("success"));
+                building.setImgPath("resources/images/" + fileName);
             }
-            else if (action.equals("updateBuilding")) {
 
-                int buildingId = Integer.parseInt(request.getParameter("buildingId"));
-                String address = request.getParameter("address");
-                String description = request.getParameter("description");
-                int floorNumber = Integer.parseInt(request.getParameter("floorNumber"));
-                Part filePart = request.getPart("imgPath");
+            buildingService.update(building);
 
-                Building building = buildingService.findById(buildingId);
-                building.setAddress(address);
-                building.setDescription(description);
-                building.setFloorNumber(floorNumber);
-
-                if (filePart != null && filePart.getSize() > 0) {
-                    String fileName = filePart.getSubmittedFileName();
-                    InputStream fileContent = filePart.getInputStream();
-                    String uploadPath = getServletContext().getRealPath("/resources/images/") + File.separator + fileName;
-                    File file = new File(uploadPath);
-                    file.getParentFile().mkdirs(); // Créez les répertoires parents si nécessaire
-                    Files.copy(fileContent, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    building.setImgPath("resources/images/" + fileName);
+            // Mettre à jour les équipements
+            String[] amenities = request.getParameterValues("amenities");
+            buildingAmenityService.deleteByBuildingId(buildingId);
+            if (amenities != null) {
+                for (String amenityId : amenities) {
+                    BuildingAmenity buildingAmenity = new BuildingAmenity();
+                    buildingAmenity.setBuildingId(building.getId());
+                    buildingAmenity.setAmenityId(Integer.parseInt(amenityId));
+                    buildingAmenityService.save(buildingAmenity);
                 }
-
-                buildingService.update(building);
-
-                // Mettre à jour les équipements
-                String[] amenities = request.getParameterValues("amenities");
-                buildingAmenityService.deleteByBuildingId(buildingId);
-                if (amenities != null) {
-                    for (String amenityId : amenities) {
-                        BuildingAmenity buildingAmenity = new BuildingAmenity();
-                        buildingAmenity.setBuildingId(building.getId());
-                        buildingAmenity.setAmenityId(Integer.parseInt(amenityId));
-                        buildingAmenityService.save(buildingAmenity);
-                    }
-                }
-
-                response.setContentType("application/json");
-                response.getWriter().write(new Gson().toJson("success"));
             }
-            else if (action.equals("deleteBuilding")) {
-                int buildingId = Integer.parseInt(request.getParameter("buildingId"));
-                buildingService.deleteBuildingAndUnits(buildingId);
-                response.getWriter().write(new Gson().toJson("Building and associated units deleted successfully!"));
-                ;
-            }else if ("addApartment".equals(action)) {
 
-                String unitNumber = request.getParameter("unitNumber");
-                String description = request.getParameter("description");
-                int floorLevel = Integer.parseInt(request.getParameter("floorLevel"));
-                int numberOfRooms = Integer.parseInt(request.getParameter("numberOfRooms"));
-                int area = Integer.parseInt(request.getParameter("area"));
-                int monthlyRent = Integer.parseInt(request.getParameter("monthlyRent"));
-                int buildingId = Integer.parseInt(request.getParameter("buildingId"));
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson("success"));
+        } else if (action.equals("deleteBuilding")) {
+            int buildingId = Integer.parseInt(request.getParameter("buildingId"));
+            buildingService.deleteBuildingAndUnits(buildingId);
+            response.getWriter().write(new Gson().toJson("Building and associated units deleted successfully!"));
+        } else if ("addApartment".equals(action)) {
 
-                RentalUnit rentalUnit = new RentalUnit();
+            String unitNumber = request.getParameter("unitNumber");
+            String description = request.getParameter("description");
+            int floorLevel = Integer.parseInt(request.getParameter("floorLevel"));
+            int numberOfRooms = Integer.parseInt(request.getParameter("numberOfRooms"));
+            int area = Integer.parseInt(request.getParameter("area"));
+            int monthlyRent = Integer.parseInt(request.getParameter("monthlyRent"));
+            int buildingId = Integer.parseInt(request.getParameter("buildingId"));
+
+            RentalUnit rentalUnit = new RentalUnit();
+            rentalUnit.setUnitNumber(unitNumber);
+            rentalUnit.setDescription(description);
+            rentalUnit.setFloorLevel(floorLevel);
+            rentalUnit.setNumberOfRooms(numberOfRooms);
+            rentalUnit.setArea(area);
+            rentalUnit.setMonthlyRent(monthlyRent);
+            rentalUnit.setBuildingId(buildingId);
+            rentalUnit.setDateCreated(java.time.LocalDate.now().toString());
+
+            rentalUnitService.save(rentalUnit);
+
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            out.write(new Gson().toJson("success"));
+            out.close();
+
+        } else if ("updateApartment".equals(action)) {
+
+            int id = Integer.parseInt(request.getParameter("id"));
+            String unitNumber = request.getParameter("unitNumber");
+            String description = request.getParameter("description");
+            int floorLevel = Integer.parseInt(request.getParameter("floorLevel"));
+            int numberOfRooms = Integer.parseInt(request.getParameter("numberOfRooms"));
+            int area = Integer.parseInt(request.getParameter("area"));
+            int monthlyRent = Integer.parseInt(request.getParameter("monthlyRent"));
+            int buildingId = Integer.parseInt(request.getParameter("buildingId"));
+
+            RentalUnit rentalUnit = rentalUnitService.findById(id);
+
+            if (rentalUnit != null) {
                 rentalUnit.setUnitNumber(unitNumber);
                 rentalUnit.setDescription(description);
                 rentalUnit.setFloorLevel(floorLevel);
@@ -309,76 +332,51 @@ public class OwnerController extends HttpServlet {
                 rentalUnit.setArea(area);
                 rentalUnit.setMonthlyRent(monthlyRent);
                 rentalUnit.setBuildingId(buildingId);
-                rentalUnit.setDateCreated(java.time.LocalDate.now().toString());
-
-                rentalUnitService.save(rentalUnit);
+                rentalUnitService.update(rentalUnit);
 
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
                 out.write(new Gson().toJson("success"));
                 out.close();
-
-            }else if ("updateApartment".equals(action)) {
-
-                int id = Integer.parseInt(request.getParameter("id"));
-                String unitNumber = request.getParameter("unitNumber");
-                String description = request.getParameter("description");
-                int floorLevel = Integer.parseInt(request.getParameter("floorLevel"));
-                int numberOfRooms = Integer.parseInt(request.getParameter("numberOfRooms"));
-                int area = Integer.parseInt(request.getParameter("area"));
-                int monthlyRent = Integer.parseInt(request.getParameter("monthlyRent"));
-                int buildingId = Integer.parseInt(request.getParameter("buildingId"));
-
-                RentalUnit rentalUnit = rentalUnitService.findById(id);
-
-                if (rentalUnit != null) {
-                    rentalUnit.setUnitNumber(unitNumber);
-                    rentalUnit.setDescription(description);
-                    rentalUnit.setFloorLevel(floorLevel);
-                    rentalUnit.setNumberOfRooms(numberOfRooms);
-                    rentalUnit.setArea(area);
-                    rentalUnit.setMonthlyRent(monthlyRent);
-                    rentalUnit.setBuildingId(buildingId);
-                    rentalUnitService.update(rentalUnit);
-
-                    response.setContentType("application/json");
-                    PrintWriter out = response.getWriter();
-                    out.write(new Gson().toJson("success"));
-                    out.close();
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    response.setContentType("application/json");
-                    PrintWriter out = response.getWriter();
-                    out.write(new Gson().toJson("Apartment not found"));
-                    out.close();
-                }
-
-            }else if ("deleteApartment".equals(action)) {
-
-                int id = Integer.parseInt(request.getParameter("id"));
-
-                rentalUnitService.delete(id);
-
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
-                out.write(new Gson().toJson("success"));
+                out.write(new Gson().toJson("Apartment not found"));
                 out.close();
+            }
 
-            } else if ("updateRequestStatus".equals(action)) {
+        } else if ("deleteApartment".equals(action)) {
+
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            rentalUnitService.delete(id);
+
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            out.write(new Gson().toJson("success"));
+            out.close();
+
+        } else if ("updateRequestStatus".equals(action)) {
             int requestId = Integer.parseInt(request.getParameter("id"));
             String status = request.getParameter("status");
+
+            RentRequest rentRequest = rentRequestService.findById(requestId);
             rentRequestService.updateStatus(requestId, status);
+
+            // Ajouter une notification pour le locataire
+            User tenant = userService.findById(rentRequest.getUserId());
+            String title = status.equals("Acceptée") ? "Demande acceptée" : "Demande refusée";
+            String content = "Votre demande de location a été " + status.toLowerCase() + ".";
+            createNotification(tenant.getId(), title, content, rentRequest.getId(), null);
+
             response.getWriter().write("success");
         } else if ("addContract".equals(action)) {
             int requestId = Integer.parseInt(request.getParameter("requestId"));
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
 
-
-
-
-
-                RentRequest rentRequest = rentRequestService.findById(requestId);
+            RentRequest rentRequest = rentRequestService.findById(requestId);
             RentalUnit rentalUnit = rentalUnitService.findById(rentRequest.getRentalUnitId());
 
             int userId = rentRequest.getUserId();
@@ -398,56 +396,78 @@ public class OwnerController extends HttpServlet {
             contract.setDateCreated(dtf.format(LocalDate.now()));
 
             rentalContractService.save(contract);
+            rentRequestService.rejectRequestsForRentalUnit(rentalUnitId);
 
             // Set RentRequest status to 'Contract'
             rentRequest.setStatus("Contrat");
             rentRequestService.update(rentRequest);
 
+            LocalDate start = LocalDate.parse(startDate);
+            LocalDate end = LocalDate.parse(endDate);
 
+            int months = (int) ChronoUnit.MONTHS.between(start, end) + 1;
 
-                LocalDate start = LocalDate.parse(startDate);
-                LocalDate end = LocalDate.parse(endDate);
+            paymentService.createPaymentsForContract(contract.getId(), startDate, months, rentalUnit.getMonthlyRent());
 
+            // Ajouter une notification pour le locataire
+            String title = "Contrat de location ajouté - CID "+contract.getId();
+            String content = "Votre contrat de location a été ajouté pour l'appartement " + rentalUnit.getUnitNumber() + ".";
+            createNotification(userId, title, content, rentRequest.getId(), contract.getId());
 
-                int months = (int) ChronoUnit.MONTHS.between(start, end) + 1;
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson("success"));
+        } else if ("terminateContract".equals(action)) {
+            int contractId = Integer.parseInt(request.getParameter("contractId"));
+            RentalContract contract = rentalContractService.findById(contractId);
 
-                paymentService.createPaymentsForContract(contract.getId(), startDate, months, rentalUnit.getMonthlyRent());
+            if (contract != null) {
+                int rentalUnitId = contract.getRentalUnitId();
 
+                // Supprimer les paiements liés
+                paymentService.deleteByRentalContractId(contractId);
 
+                // Supprimer la demande de location liée
+                rentRequestService.deleteByRentalUnitId(rentalUnitId);
+
+                // Supprimer le contrat
+                rentalContractService.delete(contractId);
 
                 response.setContentType("application/json");
                 response.getWriter().write(new Gson().toJson("success"));
-        }else if ("terminateContract".equals(action)) {
-                int contractId = Integer.parseInt(request.getParameter("contractId"));
-                RentalContract contract = rentalContractService.findById(contractId);
-
-                if (contract != null) {
-                    int rentalUnitId = contract.getRentalUnitId();
-
-                    // Supprimer les paiements liés
-                    paymentService.deleteByRentalContractId(contractId);
-
-                    // Supprimer la demande de location liée
-                    rentRequestService.deleteByRentalUnitId(rentalUnitId);
-
-                    // Supprimer le contrat
-                    rentalContractService.delete(contractId);
-
-                    response.setContentType("application/json");
-                    response.getWriter().write(new Gson().toJson("success"));
-                } else {
-                    response.setContentType("application/json");
-                    response.getWriter().write(new Gson().toJson("error"));
-                }
-            }else if ("payPayment".equals(action)) {
-                int paymentId = Integer.parseInt(request.getParameter("paymentId"));
-                paymentService.payPayment(paymentId);
-                response.setContentType("text/plain");
-                response.getWriter().write("Payment updated successfully");
+            } else {
+                response.setContentType("application/json");
+                response.getWriter().write(new Gson().toJson("error"));
             }
+        } else if ("payPayment".equals(action)) {
+            int paymentId = Integer.parseInt(request.getParameter("paymentId"));
+            paymentService.payPayment(paymentId);
+
+            // Ajouter une notification pour le locataire
+            Payment payment = paymentService.findById(paymentId);
+            RentalContract contract = rentalContractService.findById(payment.getRentalContractId());
+            User tenant = userService.findById(contract.getUserId());
+            String title = "Paiement effectué - IDP"+payment.getId();
+            String content = "Votre paiement de " + payment.getAmount() + " F CFA du "+ payment.getPaymentDate() +" pour le contrat de location C" + contract.getId() + " a été effectué.";
+            createNotification(tenant.getId(), title, content, null, contract.getId());
+
+            response.setContentType("text/plain");
+            response.getWriter().write("Payment updated successfully");
+        }
 
     }
 
+    private void createNotification(int userId, String title, String content, Integer rentRequestId, Integer rentalContractId) {
+        Notification notification = new Notification();
+        notification.setUserId(userId);
+        notification.setTitle(title);
+        notification.setContent(content);
+        notification.setRentRequestId(rentRequestId);
+        notification.setRentalContractId(rentalContractId);
+        notification.setStatus(0); // non lue
+        notification.setDateCreated(LocalDate.now().toString());
+
+        notificationService.save(notification);
+    }
 
     private List<RentRequestDTO> convertToDTOs(List<RentRequest> rentRequests) {
         return rentRequests.stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -465,5 +485,4 @@ public class OwnerController extends HttpServlet {
         LocalDate end = LocalDate.parse(endDate);
         return end.getYear() * 12 + end.getMonthValue() - (start.getYear() * 12 + start.getMonthValue());
     }
-
 }

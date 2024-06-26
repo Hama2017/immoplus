@@ -3,7 +3,10 @@ package sn.kd.immoplus.controller;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
+import sn.kd.immoplus.model.Notification;
 import sn.kd.immoplus.model.User;
+import sn.kd.immoplus.service.NotificationService;
+import sn.kd.immoplus.service.NotificationServiceImpl;
 import sn.kd.immoplus.service.UserService;
 import sn.kd.immoplus.service.UserServiceImpl;
 
@@ -24,6 +27,7 @@ import java.util.List;
 public class UserController extends HttpServlet {
 
     private UserService userService = new UserServiceImpl();
+    private NotificationService notificationService = new NotificationServiceImpl();
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -92,6 +96,40 @@ public class UserController extends HttpServlet {
             HttpSession session = request.getSession();
             session.invalidate();
             request.getRequestDispatcher("/WEB-INF/views/user/login.jsp").forward(request, response);
+        } else if (action.equals("listNotifications")) {
+            User user = (User) request.getSession().getAttribute("user");
+            request.setAttribute("user", user);
+            request.setAttribute("action", "listNotifications");
+
+            if (request.getParameter("idNotification") != null) {
+                int notificationId = Integer.parseInt(request.getParameter("idNotification"));
+                notificationService.markAsRead(notificationId);
+            }
+
+            request.getRequestDispatcher("/WEB-INF/views/layout.jsp").forward(request, response);
+        } else if ("getNotifications".equals(action)) {
+            int userId = ((User) request.getSession().getAttribute("user")).getId();
+            List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson(notifications));
+        } else if ("viewedNotification".equals(action)) {
+            int notificationId = Integer.parseInt(request.getParameter("idNotification"));
+            notificationService.markAsRead(notificationId);
+            response.sendRedirect("user?action=listNotifications");
+        } else if ("deleteNotification".equals(action)) {
+            int notificationId = Integer.parseInt(request.getParameter("idNotification"));
+            Notification notification = notificationService.findById(notificationId);
+            notificationService.deleteNotification(notification);
+            response.sendRedirect("user?action=listNotifications");
+        } else if ("deleteAllNotificationUser".equals(action)) {
+            int userId = ((User) request.getSession().getAttribute("user")).getId();
+            notificationService.deleteAllNotificationsByUserId(userId);
+            response.sendRedirect("user?action=listNotifications");
+        } else if ("getUnreadNotificationsCount".equals(action)) {
+            int userId = ((User) request.getSession().getAttribute("user")).getId();
+            int unreadCount = notificationService.getUnreadNotificationsCount(userId);
+            response.setContentType("application/json");
+            response.getWriter().write(new Gson().toJson(unreadCount));
         }
     }
 
@@ -129,6 +167,17 @@ public class UserController extends HttpServlet {
                 response.setCharacterEncoding("UTF-8");
                 PrintWriter out = response.getWriter();
                 out.print("{\"error\": true, \"message\": \"Cet email est déjà utilisé pour un compte.\"}");
+                out.flush();
+                return;
+            }
+
+
+            // Vérifier si le numero existe déjà
+            if (userService.phoneNumberExists(phoneNumber)) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"error\": true, \"message\": \"Numero de telephone est déjà utilisé pour un compte.\"}");
                 out.flush();
                 return;
             }

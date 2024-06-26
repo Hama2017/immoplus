@@ -117,6 +117,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         const buildingsTable = $('#buildingsTable').DataTable({
@@ -137,7 +138,7 @@
                 {
                     data: null,
                     render: function (data) {
-                        return "<button class='btn btn-primary btn-sm edit-btn' data-id='"+data.id+"'>Modifier</button><button class='btn btn-danger btn-sm delete-btn'  data-id='"+data.id+"'>Supprimer</button>";
+                        return "<button class='btn btn-primary btn-sm edit-btn' data-id='"+data.id+"'>Modifier</button><button class='btn btn-danger btn-sm delete-btn' style='margin-left: 10px;'  data-id='"+data.id+"'>Supprimer</button>";
                     }
                 }
             ]
@@ -176,6 +177,9 @@
 
         $('#addBuildingForm').on('submit', function (e) {
             e.preventDefault();
+            if (!validateBuildingForm('#addBuildingForm')) {
+                return;
+            }
             var formData = new FormData(this);
 
             $.ajax({
@@ -195,12 +199,6 @@
             });
         });
 
-
-
-
-
-
-
         // Bouton pour ouvrir le modal d'édition
         $('#buildingsTable').on('click', '.edit-btn', function () {
             var buildingId = $(this).data('id');
@@ -209,7 +207,6 @@
                 url: 'owner?action=getBuildingDetails',
                 data: {buildingId: buildingId},
                 success: function (data) {
-                    console.log(data.building)
                     $('#editBuildingId').val(data.building.id);
                     $('#editAddress').val(data.building.address);
                     $('#editDescription').val(data.building.description);
@@ -235,6 +232,9 @@
         // Formulaire de modification
         $('#editBuildingForm').on('submit', function (e) {
             e.preventDefault();
+            if (!validateBuildingForm('#editBuildingForm')) {
+                return;
+            }
             var formData = new FormData(this);
             formData.append('userId', $('#currentUserId').val());
             $.ajax({
@@ -254,7 +254,6 @@
             });
         });
 
-        // Bouton pour ouvrir le modal de suppression
         // Bouton pour ouvrir le modal de suppression
         $('#buildingsTable').on('click', '.delete-btn', function () {
             var buildingId = $(this).data('id');
@@ -288,5 +287,27 @@
                 }
             });
         });
+
+        function validateBuildingForm(formSelector) {
+            let isValid = true;
+            const form = $(formSelector);
+
+            form.find('input, textarea').each(function () {
+                if (!$(this).val()) {
+                    isValid = false;
+                    Swal.fire('Erreur', 'Tous les champs doivent être remplis.', 'error');
+                    return false;  // break the loop
+                }
+
+                const value = parseInt($(this).val());
+                if ($(this).attr('type') === 'number' && value < 0) {
+                    isValid = false;
+                    Swal.fire('Erreur', 'Les valeurs numériques doivent être positives.', 'error');
+                    return false;  // break the loop
+                }
+            });
+
+            return isValid;
+        }
     });
 </script>

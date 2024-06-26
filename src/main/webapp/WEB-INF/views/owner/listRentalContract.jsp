@@ -15,7 +15,6 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Contrats de Location</h3>
                 <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addContractModal">Ajouter Contrat</button>
             </div>
             <div class="card-body">
@@ -85,16 +84,18 @@
                     var tbody = $('#contractsTable tbody');
                     tbody.empty();
                     contracts.forEach(function (contract) {
+                        console.log(contract)
+
                         var row = "<tr>" +
-                            "<td>" + contract.id + "</td>" +
-                            "<td>" + contract.tenantName + "</td>" +
-                            "<td>" + contract.unitNumber + "</td>" +
-                            "<td>" + contract.startDate + "</td>" +
-                            "<td>" + contract.endDate + "</td>" +
-                            "<td>" + contract.amount + "</td>" +
-                            "<td>" + contract.status + "</td>";
-                        if (contract.status === "Validée") {
-                            row += "<td><button class='btn btn-danger btn-sm terminate-btn' data-id='" + contract.id + "'>Résilier</button></td>";
+                            "<td>C" + contract.rentalContract.id + "</td>" +
+                            "<td>" + contract.tenant.firstName +" "+ contract.tenant.lastName + "</td>" +
+                            "<td>" + contract.rentalUnit.description + "</td>" +
+                            "<td>" + contract.rentalContract.startDate + "</td>" +
+                            "<td>" + contract.rentalContract.endDate + "</td>" +
+                            "<td>" + contract.rentalContract.amount + "</td>" +
+                            "<td>" + contract.rentalContract.status + "</td>";
+                        if (contract.rentalContract.status === "Validée") {
+                            row += "<td><button class='btn btn-danger btn-sm terminate-btn' data-id='" + contract.rentalContract.id + "'>Résilier</button></td>";
                         }
                         row += +"</tr>";
 
@@ -117,6 +118,7 @@
                     console.log(tenants)
                     var tenantSelect = $('#tenantSelect');
                     tenantSelect.empty();
+                    tenantSelect.append('<option value="">Sélectionner un locataire</option>');
                     tenants.forEach(function (tenant) {
                         var option = "<option value='" + tenant.rentRequest.id + "'>DL" + tenant.rentRequest.id + " - " + tenant.user.firstName + " " + tenant.user.lastName + "/APP-" + tenant.rentalUnit.unitNumber + " </option>";
                         tenantSelect.append(option);
@@ -131,6 +133,22 @@
         // Ajouter un contrat
         $('#addContractForm').on('submit', function (e) {
             e.preventDefault();
+
+            // Validation des dates
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            if (new Date(startDate) > new Date(endDate)) {
+                Swal.fire('Erreur', 'La date de début ne peut pas être postérieure à la date de fin.', 'error');
+                return;
+            }
+
+            // Validation du sélecteur de contrat
+            var tenantSelect = $('#tenantSelect').val();
+            if (!tenantSelect) {
+                Swal.fire('Erreur', 'Il n\'y a pas de demande valide.', 'error');
+                return;
+            }
+
             var formData = $(this).serialize();
             $.ajax({
                 url: 'owner?action=addContract',
@@ -146,7 +164,6 @@
                 }
             });
         });
-
 
         $('#contractsTable tbody').on('click', '.terminate-btn', function() {
             var contractId = $(this).data('id');
@@ -185,10 +202,51 @@
             });
         });
 
-
-
         // Charger les données initiales
         loadContracts();
         loadTenants();
     });
 </script>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .card-text {
+        margin-bottom: 10px;
+    }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .border-primary {
+        border-width: 2px;
+    }
+
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+        border: 0;
+        border-radius: .25em;
+        background: initial;
+        background-color: initial;
+        background-color: #0092dd;
+        color: #fff;
+        font-size: 1em;
+    }
+</style>

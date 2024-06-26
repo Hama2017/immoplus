@@ -62,4 +62,33 @@ public class RentRequestDAO extends GenericDAOImpl<RentRequest, Integer> {
         }
     }
 
+
+    public boolean hasUserRequested(int userId, int rentalUnitId) {
+        try (Session session = HibernateUtil.getSession()) {
+            String sql = "SELECT COUNT(*) FROM rent_requests WHERE id_user = :userId AND rental_unit_id = :rentalUnitId";
+            Query<Long> query = session.createNativeQuery(sql, Long.class);
+            query.setParameter("userId", userId);
+            query.setParameter("rentalUnitId", rentalUnitId);
+            return query.uniqueResult() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void rejectRequestsForRentalUnit(int rentalUnitId) {
+        try (Session session = HibernateUtil.getSession()) {
+            session.beginTransaction();
+            String hql = "UPDATE RentRequest SET status = 'Refusée' WHERE rentalUnitId = :rentalUnitId AND status = 'En attente'";
+            Query query = session.createQuery(hql);
+            query.setParameter("rentalUnitId", rentalUnitId);
+            query.executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

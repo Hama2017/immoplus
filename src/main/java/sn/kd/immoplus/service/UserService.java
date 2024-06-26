@@ -14,4 +14,6 @@ public interface UserService {
     boolean updatePassword(int userId, String newPassword);
     boolean updateProfile(int userId, String firstName, String lastName, String email, String phoneNumber, String address);
     void delete(User entity);
+    boolean phoneNumberExists(String phoneNumber);
+
 }

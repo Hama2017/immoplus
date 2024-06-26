@@ -54,4 +54,10 @@ public class UserServiceImpl implements UserService {
     public void delete(User entity) {
         userDAO.delete(entity);
     }
+
+    @Override
+    public boolean phoneNumberExists(String phoneNumber) {
+        return userDAO.phoneNumberExists(phoneNumber);
+    }
+
 }

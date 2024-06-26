@@ -67,5 +67,15 @@ public class RentRequestServiceImpl implements RentRequestService {
         rentRequestDAO.deleteByRentalUnitId(rentalUnitId);
     }
 
+    @Override
+    public boolean hasUserRequested(int userId, int rentalUnitId) {
+        return rentRequestDAO.hasUserRequested(userId, rentalUnitId);
+    }
+
+    @Override
+    public void rejectRequestsForRentalUnit(int rentalUnitId) {
+         rentRequestDAO.rejectRequestsForRentalUnit(rentalUnitId);
+    }
+
 
 }

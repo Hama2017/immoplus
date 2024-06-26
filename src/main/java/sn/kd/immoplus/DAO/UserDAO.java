@@ -40,6 +40,18 @@ public class UserDAO extends GenericDAOImpl<User, Long> {
         }
     }
 
+    public boolean phoneNumberExists(String phoneNumber) {
+        try (Session session = HibernateUtil.getSession()) {
+            String hql = "SELECT 1 FROM User WHERE phoneNumber = :phoneNumber";
+            Query query = session.createQuery(hql);
+            query.setParameter("phoneNumber", phoneNumber);
+            return query.uniqueResult() != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean updatePassword(int userId, String newPassword) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSession()) {
